@@ -1,7 +1,12 @@
 from platform import node
 from node import *
 
+""""
+create the hueristic value of each piece
+update the values after each turn ?
+mark vistied nodes 
 
+"""
 class Graph(object):
 
     def __init__(self,dimension = "8x8"):
@@ -12,7 +17,19 @@ class Graph(object):
     def setTotalNodes(self):
         allValues = [int(x) for x in self.dimension.split("x")]
         self.totalNodes = allValues[0] * allValues[1]
-
+    def createBoard(self,x,y,counter):
+        
+        if (counter == self.totalNodes):
+            return 1
+        elif (x > 7):
+            x = 0
+            print("\n",end="")
+            return self.createBoard(x,y + 1,counter)
+        else:
+            newNode = Node(x,y)
+            self.connections.update({newNode:[]})
+            print(f"({newNode.x},{newNode.y})",end=" ")
+            return self.createBoard(x + 1,y,counter + 1)
     def findNeighbors(self,Node,index = 0,answers = []):
         xOffsets = (1,-1,1,-1,2,-2,2,-2)
         yOffsets = (2,2,-2,-2,1,1,-1,-1)
@@ -71,8 +88,12 @@ if __name__ == "__main__":
     graph = Graph()
     # graph.setTotalNodes()
     # print(graph.totalNodes)
-    answers = graph.findNeighbors(first,0,[])
-    for x in answers:
-        print(x)
-    graph.createAllNodes(0,0)
+    # answers = graph.findNeighbors(first,0,[])
+    # for x in answers:
+    #     print(x)
+    # graph.createAllNodes(0,0)
     # print(graph.connections)
+    graph.setTotalNodes()
+    graph.createBoard(0,0,0)
+    print(graph.connections)
+    print(graph.totalNodes)
