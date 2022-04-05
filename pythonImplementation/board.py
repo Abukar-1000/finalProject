@@ -2,6 +2,7 @@ from platform import node
 from node import *
 
 """"
+was changed 
 create the hueristic value of each piece
 update the values after each turn ?
 mark vistied nodes 
