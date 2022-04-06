@@ -1,6 +1,8 @@
 from platform import node
 from select import select
 from textwrap import indent
+
+from urllib3 import Retry
 from node import *
 
 """"
@@ -30,8 +32,6 @@ class Graph(object):
 
         if (counter == self.totalNodes):
             return totalNodes
-        elif (y > 7):
-            y = 0
         elif (x > 7):
             x = 0
             print("\n",end="")
@@ -42,6 +42,9 @@ class Graph(object):
             print(f"({newNode.x},{newNode.y})",end=" ")
             return self.createAllNodes(totalNodes,x + 1,y,counter + 1)
     def findNode(self,index,x,y,node = None):
+        """"
+        should find a node with the given x,y values 
+        """
         if ((node.x == x) and (node.y == y)):
             return node
         else:
@@ -50,16 +53,42 @@ class Graph(object):
     def findNeighbors(self,originalX,originalY,index,totalNodes):
         """"
         given an x and a y should return a list of all valid nodes from each positions
+        used to create a dictionary of nodes 
         """
         xOffsets = (1,-1,1,-1,2,-2,2,-2)
         yOffsets = (2,2,-2,-2,1,1,-1,-1)
         if (index == (len(xOffsets))):
             return totalNodes
         else:
-            if ((originalX))
-    def connectAllNodes(self,x,y):
-        pass
-
+            # create new x and new y 
+            # sanitize new x, and y offsets so its withing the gameboard
+            newX = originalX + xOffsets[index]
+            newY = originalY + yOffsets[index]
+            
+            if ((newX >= 0) and (newX <= 7)):
+                if ((newY >= 0) and (newY <= 7)):
+                    # find the node that corrisponds to the x,y
+                    newNode = self.findNode(0,newX,newY,Node(0,0))
+                    totalNodes.append(newNode)
+                    print(f" \n ({newNode.x},{newNode.y}) location: {newNode}")
+        return self.findNeighbors(originalX,originalY,index + 1,totalNodes)
+            
+    def connectAllNodes(self,counter):
+        """"
+        from a given node, it should create an list (arrayList) of legal nodes to visit
+        find the current node
+        find all nodes that can be visited and add them to a list 
+        set the degree of the current node 
+        add the current node as a key
+        the value will be the list of legal moves
+        """
+        if (counter == self.totalNodes):
+            return 1
+        else:
+            currentNode = self.findNode(0,0,0,Node(0,0))
+            neighbors = self.findNeighbors(currentNode.x,currentNode.y,0,[])
+            self.connections.update({currentNode:neighbors})
+        return self.connectAllNodes(counter + 1)
 def printBoard(board,rows):
     for x in range(len(board)):
         if (x % rows == 0):
@@ -86,9 +115,10 @@ if __name__ == "__main__":
     # print(graph.connections)
     # print(graph.totalNodes)
     graph.createAllNodes(graph.allNodes,0,0,0)
-    neighbors = graph.findNeighbors(0,0,0,[])
-    for newNode in neighbors:
-        print(newNode.x,newNode.y)
+    graph.connectAllNodes(0)
+    print(graph.connections)
+    # for newNode in neighbors:
+    #     print(newNode.x,newNode.y)
 
 
 
