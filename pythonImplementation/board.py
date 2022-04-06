@@ -1,8 +1,3 @@
-from platform import node
-from select import select
-from textwrap import indent
-
-from urllib3 import Retry
 from node import *
 
 """"
@@ -10,11 +5,10 @@ create all nodes
 link all nodes 
 
 algorithm:
-was reverted
-create the hueristic value of each piece
-update the values after each turn ?
+create the hueristic value of each piece (degree attribute)
+update the values after each turn 
 mark vistied nodes 
-
+always choose the node with the least degree
 """
 class Graph(object):
 
@@ -70,10 +64,10 @@ class Graph(object):
                     # find the node that corrisponds to the x,y
                     newNode = self.findNode(0,newX,newY,Node(0,0))
                     totalNodes.append(newNode)
-                    print(f" \n ({newNode.x},{newNode.y}) location: {newNode}")
+                    # print(f" \n ({newNode.x},{newNode.y}) location: {newNode}")
         return self.findNeighbors(originalX,originalY,index + 1,totalNodes)
             
-    def connectAllNodes(self,counter):
+    def connectAllNodes(self,x,y,counter):
         """"
         from a given node, it should create an list (arrayList) of legal nodes to visit
         find the current node
@@ -84,11 +78,29 @@ class Graph(object):
         """
         if (counter == self.totalNodes):
             return 1
+        elif (x > 7):
+            x = 0
+            return self.connectAllNodes(x,y + 1,counter)
+        elif (y > 7):
+            y = 0
         else:
-            currentNode = self.findNode(0,0,0,Node(0,0))
+            currentNode = self.findNode(0,x,y,Node(0,0))
             neighbors = self.findNeighbors(currentNode.x,currentNode.y,0,[])
+            currentNode.degree = len(neighbors)
+            print(f" \n \n current: ({currentNode.x},{currentNode.y}) location: {currentNode} | counter: {counter} | x: {x} y: {y}")
+            for node in neighbors:
+                print(f"neighbor: ({node.x},{node.y}) | {node}")
             self.connections.update({currentNode:neighbors})
-        return self.connectAllNodes(counter + 1)
+        return self.connectAllNodes(x + 1,y,counter + 1)
+
+    def createBoard(self):
+        """"
+        should create the game board
+        first create all the nodes 
+        connect all the nodes
+        """
+        self.createAllNodes(self.allNodes,0,0,0)
+        self.connectAllNodes(0,0,0)
 def printBoard(board,rows):
     for x in range(len(board)):
         if (x % rows == 0):
@@ -96,83 +108,9 @@ def printBoard(board,rows):
         print(board[x])
 
 if __name__ == "__main__":
-    # xStart,yStart = (5,5)
-    # board = [[0 for x in range(xStart)] for y in range(yStart)]
-    # board[0][1] = "k"
-    # printBoard(board,yStart)
-    # print(board)
     first = Node(3,3)
     graph = Graph()
-    # graph.setTotalNodes()
-    # print(graph.totalNodes)
-    # answers = graph.findNeighbors(first,0,[])
-    # for x in answers:
-    #     print(x)
-    # graph.createAllNodes(0,0)
-    # print(graph.connections)
     graph.setTotalNodes()
-    # graph.createBoard(0,0,0)
-    # print(graph.connections)
-    # print(graph.totalNodes)
-    graph.createAllNodes(graph.allNodes,0,0,0)
-    graph.connectAllNodes(0)
-    print(graph.connections)
-    # for newNode in neighbors:
-    #     print(newNode.x,newNode.y)
+    graph.createBoard()
 
 
-
-# def createBoard(self,x,y,counter):
-        
-#         if (counter == self.totalNodes):
-#             return 1
-#         elif (x > 7):
-#             x = 0
-#             print("\n",end="")
-#             return self.createBoard(x,y + 1,counter)
-#         else:
-#             newNode = Node(x,y)
-#             self.connections.update({newNode:[]})
-#             print(f"({newNode.x},{newNode.y})",end=" ")
-#             return self.createBoard(x + 1,y,counter + 1)
-#     def findNeighbors(self,Node,index = 0,answers = []):
-#         xOffsets = (1,-1,1,-1,2,-2,2,-2)
-#         yOffsets = (2,2,-2,-2,1,1,-1,-1)
-#         if (index == (len(xOffsets))):
-#             return answers
-#         else:
-#             newX = Node.x + xOffsets[index]
-#             newY = Node.y + yOffsets[index]
-#             if (((newX >= 0) and (newX <= 7)) and ((newY >= 0) and (newY <= 7))):
-#                 answers.append((newX,newY))
-#         return self.findNeighbors(Node,index+1,answers)
-        
-#     def createAllNodes(self,x,y):
-#         """"
-#         base if y > 7
-#         print new lane if x > 7
-#         increment the x and y 
-
-#         create a new node 
-#         set its x and y values 
-#         find all valid neighbors for each node 
-        
-#         """
-#         if (y > 7):
-#             return 1
-#         elif (x > 7):
-#             x = 0
-#             print("\n",end="")
-#             return self.createAllNodes(x,y + 1)
-#         else:
-#             newNode = Node(x,y)
-#             if (newNode not in self.connections):
-#                 neighbors = self.findNeighbors(newNode,0,[])
-#                 self.connections.update({newNode:neighbors})
-#                 newNode.degree = len(neighbors)
-#             # else:
-#             #     neighbors = self.findNeighbors(newNode,0,[])
-#             #     self.connections[newNode].extend(neighbors)
-#             #     newNode.degree = len(neighbors)
-#             print(f"({newNode.degree})",end=" ")
-#             return self.createAllNodes(x + 1,y)
