@@ -6,6 +6,7 @@ class Node(object):
         self.x = x
         self.y = y
         self.degree = 0
+        self.orderVisited = -1
         self.visited = False
         self.neighbors = []
 

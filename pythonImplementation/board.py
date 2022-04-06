@@ -101,6 +101,20 @@ class Graph(object):
         """
         self.createAllNodes(self.allNodes,0,0,0)
         self.connectAllNodes(0,0,0)
+
+    def printBoard(self):
+        """"
+        print the nodes at each position of the gamboard 
+        """
+        counter = 0
+        for node in self.allNodes:
+            if (counter % 8 == 0):
+                print("\n",end="")
+            if (node.orderVisited >= 0):
+                print(node.orderVisited,end=" ")
+            else:
+                print(f"({node.x},{node.y})",end=" ")
+            counter += 1
 def printBoard(board,rows):
     for x in range(len(board)):
         if (x % rows == 0):
@@ -112,5 +126,6 @@ if __name__ == "__main__":
     graph = Graph()
     graph.setTotalNodes()
     graph.createBoard()
+    graph.printBoard()
 
 
