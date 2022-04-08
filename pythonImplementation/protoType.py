@@ -25,15 +25,21 @@ def findClosestToWall(node1,node2):
     check the x values 
     check the y values
     """
-    if (node1.x != node2.x):
-        if (node1.x < node2.x):
+    xdifferece1,ydifferece1 = calulateDifference(node1)
+    xdifferece2,ydifferece2 = calulateDifference(node2)
+    if (xdifferece1 != xdifferece2):
+        if (xdifferece1 < xdifferece2):
             return node1
         else:
             return node2
     else:
-        if (node1.y < node2.y):
+        if (ydifferece1 < ydifferece2):
             return node1
         else:
             return node2
 
-print(4 % 0)
+first = Node(2,6)
+second = Node(7,6)
+calulateDifference(first)
+closest = findClosestToWall(first,second)
+print(f"closest: {closest.x},{closest.y}")
