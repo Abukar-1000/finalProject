@@ -1,3 +1,4 @@
+from select import select
 from node import *
 
 """"
@@ -107,6 +108,10 @@ class Graph(object):
         print the nodes at each position of the gamboard 
         """
         counter = 0
+        for x in range(len(self.allNodes)):
+            counter += 1
+            self.allNodes[x].orderVisited = counter
+        counter = 0
         for node in self.allNodes:
             if (counter % 8 == 0):
                 print("\n",end="")
@@ -115,6 +120,36 @@ class Graph(object):
             else:
                 print(f"({node.x},{node.y})",end=" ")
             counter += 1
+    def makeTour(self,startSpot):
+        currentSpot = None
+        counter = 0
+
+        currentSpot = startSpot
+        while (counter < 63):
+            pass
+    def breakTie(self,currentNode,answer = None,minimalValue = 10 ,step = 0,possiablePositions = []):
+        """"
+        called when there is a tie when selecting the node with the lest degree
+        for all the nodes available to the current node
+        check the degree of those nodes 
+        choose the node with the least digree
+        """
+        answer = None
+        minimalValue = 10
+        counter = 0
+        # print(self.connections[currentNode])
+        for x in range(len(self.connections[currentNode])):
+            node = self.connections[currentNode][x]
+            print(f"({counter}): ({node.x},{node.y}) | {node.degree}")
+            if (node.degree < minimalValue):
+                minimalValue = node.degree
+                answer = node
+            counter += 1
+        print(f" \nnode {answer} | ({answer.x},{answer.y}) | digree {answer.degree}")
+        return answer
+    def test(self):
+        # print(self.connections[self.allNodes[27]])
+        self.breakTie(self.allNodes[27])
 def printBoard(board,rows):
     for x in range(len(board)):
         if (x % rows == 0):
@@ -126,6 +161,5 @@ if __name__ == "__main__":
     graph = Graph()
     graph.setTotalNodes()
     graph.createBoard()
-    graph.printBoard()
-
-
+    graph.test()
+    # graph.breakTie(first)
