@@ -6,9 +6,9 @@ class Node(object):
         self.x = x
         self.y = y
         self.degree = 0
-        self.orderVisited = -1
+        self.orderVisited = 0
         self.visited = False
-        self.neighbors = []
+        self.nextNode = None
 
     def addNeighbor(self,node):
         "adds a node that can be reached from the current node"

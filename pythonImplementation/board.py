@@ -1,6 +1,4 @@
-from select import select
 from node import *
-
 """"
 create all nodes 
 link all nodes 
@@ -10,6 +8,10 @@ create the hueristic value of each piece (degree attribute)
 update the values after each turn 
 mark vistied nodes 
 always choose the node with the least degree
+
+selecting:
+get the degree of neighbors | check if a neighbor has been visited 
+select the neighbor with the least degree
 """
 class Graph(object):
 
@@ -34,11 +36,11 @@ class Graph(object):
         else:
             newNode = Node(x,y)
             totalNodes.append(newNode)
-            print(f"({newNode.x},{newNode.y})",end=" ")
             return self.createAllNodes(totalNodes,x + 1,y,counter + 1)
     def findNode(self,index,x,y,node = None):
         """"
         should find a node with the given x,y values 
+        so i can find already existing nodes with the given (x,y)
         """
         if ((node.x == x) and (node.y == y)):
             return node
@@ -63,9 +65,8 @@ class Graph(object):
             if ((newX >= 0) and (newX <= 7)):
                 if ((newY >= 0) and (newY <= 7)):
                     # find the node that corrisponds to the x,y
-                    newNode = self.findNode(0,newX,newY,Node(0,0))
+                    newNode = self.findNode(0,newX,newY,Node(-1,-1))
                     totalNodes.append(newNode)
-                    # print(f" \n ({newNode.x},{newNode.y}) location: {newNode}")
         return self.findNeighbors(originalX,originalY,index + 1,totalNodes)
             
     def connectAllNodes(self,x,y,counter):
@@ -85,12 +86,9 @@ class Graph(object):
         elif (y > 7):
             y = 0
         else:
-            currentNode = self.findNode(0,x,y,Node(0,0))
+            currentNode = self.findNode(0,x,y,Node(-1,-1))
             neighbors = self.findNeighbors(currentNode.x,currentNode.y,0,[])
             currentNode.degree = len(neighbors)
-            print(f" \n \n current: ({currentNode.x},{currentNode.y}) location: {currentNode} | counter: {counter} | x: {x} y: {y}")
-            for node in neighbors:
-                print(f"neighbor: ({node.x},{node.y}) | {node}")
             self.connections.update({currentNode:neighbors})
         return self.connectAllNodes(x + 1,y,counter + 1)
 
@@ -100,17 +98,14 @@ class Graph(object):
         first create all the nodes 
         connect all the nodes
         """
-        self.createAllNodes(self.allNodes,0,0,0)
+        self.setTotalNodes()
+        self.allNodes = self.createAllNodes([],0,0,0)
         self.connectAllNodes(0,0,0)
 
     def printBoard(self):
         """"
         print the nodes at each position of the gamboard 
         """
-        counter = 0
-        for x in range(len(self.allNodes)):
-            counter += 1
-            self.allNodes[x].orderVisited = counter
         counter = 0
         for node in self.allNodes:
             if (counter % 8 == 0):
@@ -120,13 +115,57 @@ class Graph(object):
             else:
                 print(f"({node.x},{node.y})",end=" ")
             counter += 1
-    def makeTour(self,startSpot):
-        currentSpot = None
-        counter = 0
+    def updateDegree(self,node):
+        """"
+        from a given node | should update its degree
+        find node & get neighbors
+        check if neighbor has been visited | if so don't increment degree
+        increment degree
+        set new degree
+        """
+        degree = 0
+        # for nodes in self.allNodes:
+        #     if ((nodes.x == node.x) and (nodes.y == node.y)):
+        #         print(f"incoming {node} | actual: {nodes}")
+        # print(self.connections[node])
+        neighbors = self.connections[node]
+        for neighbor in neighbors:
+            if (neighbor.visited == False):
+                degree += 1
+        node.degree = degree
 
+    def findLeastDigree(self,node):
+        """""
+        finds the neighbor with the least amount of moves available 
+        """
+        minimum = 10
+        result = None
+        neighbors = self.connections[node]
+        for node in neighbors:
+            self.updateDegree(node)
+            if ((node.degree < minimum) and (node.visited == False)):
+                minimum = node.degree
+                result = node
+        return result
+
+    def makeTour(self,startSpot):
+        """"
+        given a starting node | should traverse the board and tour
+        """
+        path = None
+        counter = 1
+        path = startSpot
         currentSpot = startSpot
-        while (counter < 63):
-            pass
+        for x in range(self.totalNodes):
+            currentSpot.orderVisited = counter
+            self.updateDegree(currentSpot)
+            currentSpot.visited = True
+            nextMove = self.findLeastDigree(currentSpot)
+            currentSpot = nextMove
+            path.nextNode = currentSpot
+            counter += 1
+        return path
+
     def breakTie(self,currentNode,answer = None,minimalValue = 10 ,step = 0,possiablePositions = []):
         """"
         called when there is a tie when selecting the node with the lest degree
@@ -137,7 +176,6 @@ class Graph(object):
         answer = None
         minimalValue = 10
         counter = 0
-        # print(self.connections[currentNode])
         for x in range(len(self.connections[currentNode])):
             node = self.connections[currentNode][x]
             print(f"({counter}): ({node.x},{node.y}) | {node.degree}")
@@ -147,19 +185,25 @@ class Graph(object):
             counter += 1
         print(f" \nnode {answer} | ({answer.x},{answer.y}) | digree {answer.degree}")
         return answer
+
     def test(self):
-        # print(self.connections[self.allNodes[27]])
-        self.breakTie(self.allNodes[27])
-def printBoard(board,rows):
-    for x in range(len(board)):
-        if (x % rows == 0):
-            print("\n")
-        print(board[x])
+        spot = input("(x,y):    ")
+        values = [int(x) for x in spot.split(',')]
+        x = values[0]
+        y = values[1]
+        startNode = self.findNode(0,x,y,Node(-1,-1))
+        print(f"({startNode.x},{startNode.y}) address: {startNode} | {self.allNodes[0]}")
+        path = self.makeTour(startNode)
+        print("starting tour:")
+        counter = 0
+        while (path.nextNode != None):
+            print(f"({counter}): ({path.x},{path.y})")
+        self.printBoard()
 
 if __name__ == "__main__":
     first = Node(3,3)
     graph = Graph()
-    graph.setTotalNodes()
+    # graph.setTotalNodes()
     graph.createBoard()
     graph.test()
     # graph.breakTie(first)
