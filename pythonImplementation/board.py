@@ -143,7 +143,7 @@ class Graph(object):
         neighbors = self.connections[node]
         for node in neighbors:
             self.updateDegree(node)
-            if ((node.degree < minimum) and (node.visited == False)):
+            if ((node.degree <= minimum) and (node.visited == False)):
                 minimum = node.degree
                 result = node
         return result
@@ -158,33 +158,13 @@ class Graph(object):
         currentSpot = startSpot
         for x in range(self.totalNodes):
             currentSpot.orderVisited = counter
-            self.updateDegree(currentSpot)
             currentSpot.visited = True
+            self.updateDegree(currentSpot)
             nextMove = self.findLeastDigree(currentSpot)
             currentSpot = nextMove
             path.nextNode = currentSpot
             counter += 1
         return path
-
-    def breakTie(self,currentNode,answer = None,minimalValue = 10 ,step = 0,possiablePositions = []):
-        """"
-        called when there is a tie when selecting the node with the lest degree
-        for all the nodes available to the current node
-        check the degree of those nodes 
-        choose the node with the least digree
-        """
-        answer = None
-        minimalValue = 10
-        counter = 0
-        for x in range(len(self.connections[currentNode])):
-            node = self.connections[currentNode][x]
-            print(f"({counter}): ({node.x},{node.y}) | {node.degree}")
-            if (node.degree < minimalValue):
-                minimalValue = node.degree
-                answer = node
-            counter += 1
-        print(f" \nnode {answer} | ({answer.x},{answer.y}) | digree {answer.degree}")
-        return answer
 
     def test(self):
         spot = input("(x,y):    ")
