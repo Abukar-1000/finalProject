@@ -10,11 +10,5 @@ class Node(object):
         self.visited = False
         self.nextNode = None
 
-    def addNeighbor(self,node):
-        "adds a node that can be reached from the current node"
-        self.degree += 1
-        self.neighbors.append(node)
-
-
 
     # print(f"{xStart} | {yStart}")
