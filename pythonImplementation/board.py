@@ -111,7 +111,10 @@ class Graph(object):
             if (counter % 8 == 0):
                 print("\n",end="")
             if (node.orderVisited >= 0):
-                print(node.orderVisited,end=" ")
+                if (node.orderVisited < 10):
+                    print(f"0{node.orderVisited}",end=" ")
+                else:
+                    print(node.orderVisited,end=" ")
             else:
                 print(f"({node.x},{node.y})",end=" ")
             counter += 1
