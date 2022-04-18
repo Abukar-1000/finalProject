@@ -10,7 +10,8 @@ class Node {
         T degree;
         T orderVisited;
         bool visited;
-        Node* nextNode; 
+        Node<T>* neighbors;
+        Node<T>* nextNode; 
     public:
         Node();
         Node(T x,T y,T degree);
@@ -19,14 +20,14 @@ class Node {
         void setDegree(T degree);
         void setOrderVisited(T order);
         void setIsVisited(bool visited);
-        void setNextNode(Node* next);
+        void setNextNode(Node<T>* next);
 
         T getX();
         T getY();
         T getDegree();
         T getOrderVisited();
         bool getVisited();
-        Node* getNextNode();
+        Node<T>* getNextNode();
 };
  
 #endif

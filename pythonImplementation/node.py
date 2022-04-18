@@ -10,5 +10,3 @@ class Node(object):
         self.visited = False
         self.nextNode = None
 
-
-    # print(f"{xStart} | {yStart}")

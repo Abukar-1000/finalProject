@@ -5,6 +5,7 @@ template <typename T>
 Node<T>::Node(){
     this->orderVisited = 0;
     this->visited = false;
+    this->neighbors = NULL;
     this->nextNode = NULL;
 }
 
@@ -15,12 +16,13 @@ Node<T>::Node(T x,T y,T degree){
     this->degree = degree;
     this->orderVisited = 0;
     this->visited = false;
+    this->neighbors = NULL;
     this->nextNode = NULL;
 }
 
 template <typename T>
-void Node<T>::setX(T x){
-    this->x = x;
+void Node<T>::setX(T xValue){
+    this->x = xValue;
 }
 
 template <typename T>
@@ -44,7 +46,7 @@ void Node<T>::setIsVisited(bool visited){
 }
 
 template <typename T>
-void Node<T>::setNextNode(Node* next){
+void Node<T>::setNextNode(Node<T>* next){
     this->nextNode = next;
 }
 
